@@ -10,7 +10,7 @@ class City:
         return self.name
 
     def __hash__(self):
-        return x + y + ord(self.name[0]) + ord(self.name[1])
+        return self.x + self.y + ord(self.name[0]) + ord(self.name[1])
 
     def add_path(self, newPath):
         self.paths.append(newPath)

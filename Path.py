@@ -35,7 +35,7 @@ class Path:
         lines = file.readlines()
         for line in lines:
             data = line.split()
-            city_src, city_dest, cost = cities[data[0]], cities[data[1]], data[2]
+            city_src, city_dest, cost = cities[data[0]], cities[data[1]], int(data[2])
             path1 = Path(city_src, city_dest, cost)
             city_src.add_path(path1)
             city_dest.add_path(path1)
