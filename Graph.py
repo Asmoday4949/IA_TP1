@@ -6,48 +6,68 @@ class Graph:
         self.cities = City.load_from_file("./Data/Positions.txt")
         self.paths = Path.load_from_file("./Data/Connections.txt", self.cities)
 
-    def a_star_own_impl(self, city_src, city_dest, heuristic):
-        cities_to_visit = [city_src]
-        cities_visited = set()
+    def compareHeuristic(h1, h2):
+        if h1 < h2:
+            return 1
+        elif h1 == h2:
+            return 0
+        else:
+            return -1
 
-        heuristic_values = dict()
-        tot_heuristic_values = dict()
+    def min(self, fScore):
+        return min(fScore, key=fScore.get)
 
-        while cities_to_visit:
-            current_city = cities_to_visit.pop(1)
+    def min_available(self, openList, fScore):
+        h = fScore[openList[0]]
+        k = openList[0]
+        for value in openList:
+            if h < fScore[value]:
+                k = value
+        return k
 
-            if current_city == city_dest:
-                return None
-            else:
-                for path in current_city.paths_generator():
-                    opposite_city = path.get_opposite_city(city)
-                    heuristic_values[opposite_city] = heuristic(current_city, opposite_city)
-                    if opposite_city not in cities_to_visit and opposite_city not in cities_visited:
-                        cities_to_visit.append(opposite_city)
+    def reconstruct_path(self, cameFrom, current):
+        total_path = {current}
+        while current in cameFrom.keys():
+            current = cameFrom[current]
+            total_path.add(current)
+        return total_path
 
+    def a_star_fr(self,  city_src, city_dest, heuristic):
+        None
 
-    # def a_star_teacher_impl(self, city_src, city_dest, heuristic):
-    #     frontier = [city_src]
-    #     history = set()
-    #
-    #     while frontier:
-    #         city = frontier.pop(0)
-    #         if city == city_dest:
-    #             print("end")
-    #             return frontier
-    #         else:
-    #             print("loop")
-    #             neighbors = city.get_neighbors()
-    #             for neighbor in neighbors:
-    #                 h_value = heuristic(city, neighbor)
-    #                 neighbor.set_h_value(h_value)
-    #                 if (neighbor not in frontier) and (neighbor not in history):
-    #                     frontier.append(neighbor)
-    #                 elif neighbor in frontier:
-    #                     if h_value < neighbor.get_h_value():
-    #                         neightbor.set_h_value(h_value)
-    #         history.add(city)
-    #     raise Exception("Solution not found")
+    def a_star_en(self, city_src, city_dest, heuristic):
+        closedList = []
+        openList = [city_src]
+
+        cameFrom = dict()
+        gScore = dict()
+        fScore = dict()
+
+        gScore[city_src] = 0
+        fScore[city_src] = heuristic(city_src, city_dest)
+
+        while openList:
+            current = self.min_available(openList, fScore)
+            if current == city_dest:
+                return self.reconstruct_path(cameFrom, current)
+
+            openList.remove(current)
+            closedList.append(current)
+
+            for neighbor in current.get_neighbors():
+                if neighbor in closedList:
+                    continue
+
+                tentative_gScore = gScore[current] + self.paths[current.get_name() + "-" + neighbor.get_name()].get_cost()
+
+                if neighbor not in openList:
+                    openList.append(neighbor)
+                elif tentative_gScore >= gScore[neighbor]:
+                    continue
+
+                cameFrom[neighbor] = current
+                gScore[neighbor] = tentative_gScore
+                fScore[neighbor] = gScore[neighbor] + heuristic(neighbor, city_dest)
 
     def get_city_from_name(self, name):
         return self.cities[name]
