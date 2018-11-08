@@ -32,3 +32,7 @@ On voit que cela concerne principalement l'heuristique 4 (distance de Manhattan)
 ### Dans un cas réel, quelle heuristique utiliseriez-vous ?
 
 ...
+
+## Liens utiles
+
+[A* Algorithme - Wikipedia EN](https://en.wikipedia.org/wiki/A*_search_algorithm)
