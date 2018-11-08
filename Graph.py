@@ -1,79 +1,80 @@
+'''
+Auteur: Malik Fleury
+Date: 29.10.2018
+Maj: 08.11.2018
+'''
+
 from City import *
 from Path import *
+from queue import *
+
+class PriorityItem:
+    ''' Classe spécifique à la queue de priorité afin de tester QUE la priorité et pas les données concernant la ville '''
+    def __init__(self, priority, item):
+        self.priority = priority
+        self.item = item
+
+    def get_item(self):
+        return self.item
+
+    def __eq__(self, other):
+        return self.priority == other.priority
+
+    def __lt__(self, other):
+        return self.priority < other.priority
 
 class Graph:
+    ''' Graph des villes '''
     def __init__(self):
         self.cities = City.load_from_file("./Data/Positions.txt")
         self.paths = Path.load_from_file("./Data/Connections.txt", self.cities)
 
-    def compareHeuristic(h1, h2):
-        if h1 < h2:
-            return 1
-        elif h1 == h2:
-            return 0
-        else:
-            return -1
+    def reconstruct_way(self, came_from, city_src, city_dest):
+        ''' Permet de reconstruire le chemin depuis la destination jusqu'a la source '''
+        current_city = city_dest
+        way = []
+        # Retrouve le chemin inverse à l'aide de "came_from"
+        while current_city != city_src:
+            way.append(current_city)
+            current_city = came_from[current_city]
+        way.append(city_src)
+        # Retourne la liste afin d'avoir les éléments dans le bon ordre
+        way.reverse()
+        return way
 
-    def min(self, fScore):
-        return min(fScore, key=fScore.get)
+    def a_star(self,  city_src, city_dest, heuristic):
+        ''' Algorithme A* '''
+        # Queue prioritaire: la priorité est coût total pour le chemin actuel + heuristique
+        frontier = PriorityQueue()
+        frontier.put(PriorityItem(0, city_src));
 
-    def min_available(self, openList, fScore):
-        h = fScore[openList[0]]
-        k = openList[0]
-        for value in openList:
-            if h < fScore[value]:
-                k = value
-        return k
+        # Dictionnaire comportant les ville visitées auparavant
+        came_from = {}
+        came_from[city_src] = None
 
-    def reconstruct_path(self, cameFrom, current):
-        total_path = {current}
-        while current in cameFrom.keys():
-            current = cameFrom[current]
-            total_path.add(current)
-        return total_path
+        # Dictionnaires gardant les coût totaux pour chaque chemin
+        # Le coût augmente au fur et à mesure qu'on avance dans la recherche
+        total_cost = {}
+        total_cost[city_src] = 0
 
-    def a_star_fr(self,  city_src, city_dest, heuristic):
-        None
-
-    def a_star_en(self, city_src, city_dest, heuristic):
-        closedList = []
-        openList = [city_src]
-
-        cameFrom = dict()
-        gScore = dict()
-        fScore = dict()
-
-        gScore[city_src] = 0
-        fScore[city_src] = heuristic(city_src, city_dest)
-
-        while openList:
-            current = self.min_available(openList, fScore)
+        while frontier:
+            # Obtention d'un chemin qui est le meilleur pour le moment
+            current = frontier.get().get_item()
             if current == city_dest:
-                return self.reconstruct_path(cameFrom, current)
-
-            openList.remove(current)
-            closedList.append(current)
-
-            for neighbor in current.get_neighbors():
-                if neighbor in closedList:
-                    continue
-
-                tentative_gScore = gScore[current] + self.paths[current.get_name() + "-" + neighbor.get_name()].get_cost()
-
-                if neighbor not in openList:
-                    openList.append(neighbor)
-                elif tentative_gScore >= gScore[neighbor]:
-                    continue
-
-                cameFrom[neighbor] = current
-                gScore[neighbor] = tentative_gScore
-                fScore[neighbor] = gScore[neighbor] + heuristic(neighbor, city_dest)
+                break;
+            for path in current.paths_generator():
+                # Obtention d'un voisin et calcule du nouveau coût
+                neighbor = path.get_opposite_city(current)
+                new_cost = total_cost[current] + path.get_cost()
+                # Si le voisin n'existe pas dans le dictionnaire OU que le nouveau coût est plus bas
+                # On ajoute le nouveau coût, on définit la priorité et on ajoute ce nouveau chemin
+                if neighbor not in total_cost or new_cost < total_cost[neighbor]:
+                    total_cost[neighbor] = new_cost
+                    priority = new_cost + heuristic(current, city_dest)
+                    frontier.put(PriorityItem(priority, neighbor))
+                    came_from[neighbor] = current
+        # Fin de la recherche, on reconstruit le chemin
+        return self.reconstruct_way(came_from, city_src, city_dest)
 
     def get_city_from_name(self, name):
         return self.cities[name]
-
-    def debug_show(self):
-        for key, city in self.cities.items():
-            print(city.get_name())
-            for path in city.paths_generator():
-                print("- ", path.get_opposite_city(city))
