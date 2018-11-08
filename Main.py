@@ -9,6 +9,12 @@ from Graph import *
 import sys
 import math
 
+#
+#   Configs
+bruteforce_mode = False
+#
+#
+
 def heuristic_0(city_src, city_dest):
     ''' 0 '''
     return 0
@@ -34,7 +40,9 @@ def ask_user_input():
     city_name_dest = input("Destination: ")
     return city_name_src, city_name_dest
 
-def show_way(way):
+def show_way(title, way, nodes_counter):
+    print(title + "\t", end='')
+    print(' | Nodes counter: ' + str(nodes_counter) + "\t | \t", end='')
     for city in way:
         print(city, end='')
         if city != way[len(way)-1]:
@@ -51,19 +59,16 @@ def show_result_all_heuristics(graph, city_name_src, city_name_dest):
     city_src = graph.get_city_from_name(city_name_src)
     city_dest = graph.get_city_from_name(city_name_dest)
 
-    way_h0 = graph.a_star(city_src, city_dest, heuristic_0)
-
-    way_h1 = graph.a_star(city_src, city_dest, heuristic_1)
-    way_h2 = graph.a_star(city_src, city_dest, heuristic_2)
-    way_h3 = graph.a_star(city_src, city_dest, heuristic_3)
-    way_h4 = graph.a_star(city_src, city_dest, heuristic_4)
-    show_way(way_h0)
-    show_way(way_h1)
-    show_way(way_h2)
-    show_way(way_h3)
-    show_way(way_h4)
-
-bruteforce_mode = True
+    way_h0, counter_0 = graph.a_star(city_src, city_dest, heuristic_0)
+    way_h1, counter_1 = graph.a_star(city_src, city_dest, heuristic_1)
+    way_h2, counter_2 = graph.a_star(city_src, city_dest, heuristic_2)
+    way_h3, counter_3 = graph.a_star(city_src, city_dest, heuristic_3)
+    way_h4, counter_4 = graph.a_star(city_src, city_dest, heuristic_4)
+    show_way("Heuristic 0: ", way_h0, counter_0)
+    show_way("Heuristic 1: ", way_h1, counter_1)
+    show_way("Heuristic 2: ", way_h2, counter_2)
+    show_way("Heuristic 3: ", way_h3, counter_3)
+    show_way("Heuristic 4: ", way_h4, counter_4)
 
 if __name__ == "__main__":
     graph = Graph()

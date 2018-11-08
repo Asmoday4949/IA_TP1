@@ -15,6 +15,9 @@ class City:
         ''' Retourne le nom de la ville '''
         return self.name
 
+    def __hash__(self):
+        return self.__str__().__hash__()
+
     def add_path(self, newPath):
         ''' Ajoute un chemin à la ville '''
         self.paths.append(newPath)
