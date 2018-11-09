@@ -1,7 +1,9 @@
 # IA_TP2
 
 Auteur: Malik Fleury
+
 Date: 29.10.2018
+
 Maj: 09.11.2018
 
 ## Description
@@ -51,7 +53,7 @@ L'heuristique à vol d'oiseau me semble la meilleure pour une estimation plus co
 Les autres heuristiques me semblent peu ou pas cohérentes pour les éléments suivants:
 
 - 0: cette heuristique peut fonctionner (admissible), mais elle n'est pas top car elle ne permet pas de définir un meilleur chemin dans le cas où nos g(n) sont égaux pour deux ou plusieurs chemins d'une ville
-- Différence en X: cette heuristique est admissible, cependant elle ne permet pas de représenté réellement la réalité en prenant en compte uniquement la différence en X
+- Différence en X: cette heuristique est admissible, cependant elle ne permet pas de représenter réellement la réalité en prenant en compte uniquement la différence en X
 - Différence en Y: cette heuristique est également rejetée pour la même raison que la différence en X
 - Manhattan: cette heuristique n'est tout simplement pas admissible, car le résultat peut être supérieure à g(n)
 
