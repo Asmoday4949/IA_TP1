@@ -21,9 +21,11 @@ class Graph:
         openSet = {city_src}
         closedSet = set()
 
+        # Score f(x) = g(x) + h(x)
         fScore = self.create_dict_big_value();
         fScore[city_src] = heuristic(city_src, city_dest)
 
+        # Score g(x) uniquement
         gScore = self.create_dict_big_value();
         gScore[city_src] = 0
 
