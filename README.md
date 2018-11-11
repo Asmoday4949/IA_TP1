@@ -40,9 +40,9 @@ Oui. Le nombre de noeuds visités se retrouve réduit si on choisit une heuristi
 
 Oui, voici deux exemples où différentes heuristiques donnent des résultats différents :
 
-![Paris-Prague](./img1.jpg "Paris-Prague")
+![Paris-Prague](img1.jpg "Paris-Prague")
 
-![Amsterdam-Prague](./img2.jpg "Amsterdam-Prague")
+![Amsterdam-Prague](img2.jpg "Amsterdam-Prague")
 
 On voit que cela concerne principalement l'heuristique 4 (distance de Manhattan). Cela est dûe au fait que cette heuristique n'est pas admissible. En effet, les résultats obtenus peuvent être supérieures au coût optimal réel. Ce qui peut engendrer des chemins non-optimaux dans certains cas.
 
